@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    res.send('Hello World')
+    res.send('The backend API is working')
 })
 app.use(require('./router/upload.routes'))
 app.use(require('./router/movieDB.routes'))

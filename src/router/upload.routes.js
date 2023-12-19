@@ -135,6 +135,39 @@ router.post('/upload/image/:type_element/:filename/:image_type/:id/:model', asyn
     }
 })
 
+// DELETE Files
+router.delete('/file/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+
+        const exist = await File.findById(id)
+
+        if (!exist) {
+            return res.status(404).json({ resStatus: "error", message: "Archivo no encontrado" })
+        }
+
+        const filePath = path.join(__dirname + exist.relative_path + '/' + exist.filename)
+
+        fs.stat(filePath, (err, stats) => {
+            if (err) {
+                return res.status(404).json({ _error: err, resStatus: "error", message: "El archivo no esta almacenado" })
+            }
+
+            fs.unlink(filePath, (err) => {
+                if (err) throw err
+                
+                // delete file object on database
+                exist.deleteOne()
+
+                res.json({ resStatus: "success", message: "El elemento fue eliminado" })
+            })
+        })
+    }
+    catch (e) {
+        res.status(500).json({ resStatus: "error", message: "Error al procesar la solicitud" })
+    }
+})
+
 router.get('/file/:id', async (req, res) => {
     try {
         const file = await File.findById(req.params.id)
@@ -159,6 +192,26 @@ router.get('/files/all', async (req, res) => {
     } catch (error) {
         console.error(error)
         res.json({ _e: error, resStatus: "error", message: "Error al procesar la solicitud" })
+    }
+})
+
+router.get('/online/file/:id', async (req, res) => {
+    try {
+        const fileData = await File.findById(req.params.id)
+
+        if (!fileData) {
+            return res.status(404).json({ resStatus: "error", message: "Objeto no encontrado" })
+        }
+
+        fs.stat(path.join(__dirname + fileData.relative_path + '/' + fileData.filename), (err, stats) => {
+            if (err) {
+                return res.status(404).json({ resStatus: "error", message: "Archivo no encontrado" })
+            }
+
+            res.json({ resStatus: "success", message: "Archivo en linea" })
+        })
+    } catch (e) {
+        res.status(500).json({ resStatus: "error", message: "Error al procesar la solicitud" })
     }
 })
 

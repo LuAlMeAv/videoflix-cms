@@ -4,6 +4,7 @@ const Movie = require('../models/MovieModel')
 const Serie = require('../models/SerieModel')
 const Season = require('../models/SeasonModel')
 const Episode = require('../models/EpisodeModel')
+const File = require('../models/FileModel')
 
 // this function are nedd a middelware simily to verifytoken
 const clearTitle = (title) => {
@@ -18,7 +19,7 @@ const clearTitle = (title) => {
     return title_clear_spaces.toLowerCase()
 }
 
-//////////-----  POST PETITIONS -----\\\\\\\\\\
+//////////-----  POST  -----\\\\\\\\\\
 router.post('/movie', async (req, res) => {
     try {
         const clear_title = clearTitle(req.body.title)
@@ -139,7 +140,7 @@ router.post('/tv/episode/:season_id', async (req, res) => {
         res.json({ _e: error, resStatus: "error", message: "Error al ejecutar la acción" })
     }
 })
-//////////-----  PUT PETITIONS -----\\\\\\\\\\
+//////////-----  PUT  -----\\\\\\\\\\
 router.put('/movie/:id', async (req, res) => {
     try {
         const movie = await Movie.findById(req.params.id)
@@ -205,7 +206,7 @@ router.put('/tv/episode/:id', async (req, res) => {
     }
 })
 
-//////////-----  GET PETITIONS -----\\\\\\\\\\
+//////////-----  GET  -----\\\\\\\\\\
 // GET ELEMENT DATA BY NAME
 router.get('/tv/t/:title', async (req, res) => {
     try {
@@ -303,25 +304,7 @@ router.get('/tv/episode/:season_id', async (req, res) => {
     }
 })
 
-// GET ALL DATA
-router.get('/db/all/movies', async (req, res) => {
-    const movies = await Movie.find({})
-    res.json(movies)
-})
-router.get('/db/all/series', async (req, res) => {
-    const series = await Serie.find({})
-    res.json(series)
-})
-router.get('/db/all/seasons', async (req, res) => {
-    const seasons = await Season.find({})
-    res.json(seasons)
-})
-router.get('/db/all/episodes', async (req, res) => {
-    const episodes = await Episode.find({})
-    res.json(episodes)
-})
-
-//////////-----  DELETE PETITIONS -----\\\\\\\\\\
+//////////-----  DELETE  -----\\\\\\\\\\
 router.delete('/movie/:id', async (req, res) => {
     try {
         const movie = await Movie.findById(req.params.id)
@@ -342,6 +325,30 @@ router.delete('/movie/:id', async (req, res) => {
         res.json({ _e: err, resStatus: 'error', message: "Error al procesar la solicitud" })
     }
 })
+router.delete('/db/movie/:id', (req, res) => {
+    File.findByIdAndDelete(req.params.id)
+        .then(r => {
+            res.json({ _res: r, resStatus: "success", message: "El elemento fue eliminado" })
+        })
+        .catch(err => res.json({ _error: err, resStatus: "error", message: "Error al procesar la solicitud" }))
+})
 
+// GET ALL DATA
+router.get('/db/all/movies', async (req, res) => {
+    const movies = await Movie.find({})
+    res.json(movies)
+})
+router.get('/db/all/series', async (req, res) => {
+    const series = await Serie.find({})
+    res.json(series)
+})
+router.get('/db/all/seasons', async (req, res) => {
+    const seasons = await Season.find({})
+    res.json(seasons)
+})
+router.get('/db/all/episodes', async (req, res) => {
+    const episodes = await Episode.find({})
+    res.json(episodes)
+})
 
 module.exports = router;

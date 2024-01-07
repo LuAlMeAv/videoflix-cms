@@ -11,17 +11,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    res.send('The backend API is working')
+    res.send('Great! the backend API is working')
 })
-app.use(require('./router/upload.routes'))
-app.use(require('./router/movieDB.routes'))
+app.use(require('./router/filesManager.routes'))
+app.use(require('./router/database.routes'))
 
-app.get('*', (req, res) => {
-    res.send('404 not found')
+app.all('*', (req, res) => {
+    res.status(404).json('WOW! no hay nada por aquí')
 })
 
 app.listen(port, () => {
     console.log("App running on port: " + port)
     connectDB();
 })
-

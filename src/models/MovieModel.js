@@ -12,6 +12,7 @@ const movieSchema = new Schema({
     tmdb_id: { type: Number },
     images: { type: Object },
     imdb_id: { type: String },
+    online: { type: Boolean, default: false },
     original_title: { type: String },
     overview: { type: String },
     poster_path: { type: String, required: true },
@@ -20,11 +21,12 @@ const movieSchema = new Schema({
     status: { type: String },
     tagline: { type: String },
     title: { type: String, required: true },
+    unique_title: { type: String, required: true },
     video_duration: { type: Number },
+    video_start: { type: Number },
     video_end: { type: Number },
     video_path: { type: String },
     year: { type: String },
-    isSerie: { type: Boolean, default: false }
 }, { timestamps: {} })
 
 module.exports = model('Movie', movieSchema);
